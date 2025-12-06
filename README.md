@@ -1,13 +1,21 @@
 # camunda-platform-7-mockito
 
 [![](https://img.shields.io/badge/Community%20Extension-An%20open%20source%20community%20maintained%20project-FF4700)](https://github.com/camunda-community-hub/community)
-[![camunda platform 7](https://img.shields.io/badge/Compatible%20with-Camunda%20Platform%207-26d07c)
+[![Camunda 7.24](https://img.shields.io/badge/Camunda%20Version-7.24-orange.svg)]([https://github.com/holisticon#open-source-lifecycle](https://docs.camunda.org/manual/7.23/))
+![](https://img.shields.io/badge/Compatible%20with-Camunda%20Platform%207-26d07c)
 [![](https://img.shields.io/badge/Lifecycle-Stable-brightgreen)](https://github.com/Camunda-Community-Hub/community/blob/main/extension-lifecycle.md#stable-)
+[![](https://img.shields.io/badge/Lifecycle-Deprecated-yellowgreen)](https://github.com/Camunda-Community-Hub/community/blob/main/extension-lifecycle.md#deprecated-)
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.camunda.community.mockito/camunda-platform-7-mockito/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.camunda.community.mockito/camunda-platform-7-mockito)
-[![Build Status](https://travis-ci.org/camunda/camunda-platform-7-mockito.svg?branch=master)](https://travis-ci.org/camunda/camunda-platform-7-mockito)
-[![codecov](https://codecov.io/gh/camunda/camunda-platform-7-mockito/branch/master/graph/badge.svg)](https://codecov.io/gh/camunda/camunda-platform-7-mockito) 
- [![Apache License V.2](https://img.shields.io/badge/license-Apache%20V.2-blue.svg)](./LICENSE)
+[![Maven Central](https://img.shields.io/maven-central/v/org.camunda.community.mockito/camunda-platform-7-mockito)](https://central.sonatype.com/artifact/org.camunda.community.mockito/camunda-platform-7-mockito)
+[![Apache License V.2](https://img.shields.io/badge/license-Apache%20V.2-blue.svg)](./LICENSE)
+
+> [!WARNING]
+> ### Discontinued/Moved
+> Due to the end of live of Camunda 7 CE with 7.24, we decided to discontinue this extension and archive the repository.
+> The Release 7.24.1 will be the last one.
+> 
+> However, we included the current state of the extension into the [holunda-io/c7](https://github.com/holunda-io/c7/) repository, where we will maintain it together with other extensions and keep it working for future C7-EE releases.
+
 
 | Important                                                                                                                                                                            |
 |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -24,11 +32,12 @@
   - [Possible Actions](#possible-actions)
   - [Easy register and verify mocks](#easy-register-and-verify-mocks)
   - [Auto mock all delegates and listeners](#auto-mock-all-delegates-and-listeners)
-- [Delegate[Task|Execution]Fake](#delegatetaskexecutionfake)
+- [Delegate&#91;Task|Execution&#93;Fake](#delegatetaskexecutionfake)
 - [Mocking of external subprocesses](#mocking-of-external-subprocesses)
 - [Mocking of message correlation builder](#mocking-of-message-correlation-builder)
 - [Stubbing and verifying access to Camunda Java API services to access process variables](#stubbing-and-verifying-access-to-camunda-java-api-services-to-access-process-variables)
 - [Release Notes](#release-notes)
+  - [Release Process](#release-process)
 - [Limitations](#limitations)
 - [Resources](#resources)
 - [Maintainer](#maintainer)
@@ -59,14 +68,14 @@ Just include camunda-platform-7-mockito in the test scope of your project:
   <groupId>org.camunda.community.mockito</groupId>
   <artifactId>camunda-platform-7-mockito</artifactId>
   <scope>test</scope>
-  <version>6.18.0</version>
+  <version>7.24.0</version>
 </dependency>
 ```
 
 gradle (kts):
 
 ```kotlin
-   testImplementation("org.camunda.community.mockito:camunda-platform-7-mockito:6.18.0")
+   testImplementation("org.camunda.community.mockito:camunda-platform-7-mockito:7.23.4")
 ```
 
 
@@ -165,6 +174,18 @@ DelegateExpressions.registerJavaDelegateMock(BEAN_NAME/BEAN_CLASS)
   .onExecutionThrowBpmnError("code", MESSAGE);
 ```
 
+* Consecutive set variables for multiple delegate executions
+
+You can set different variables on consecutive executions with:
+
+```java
+DelegateExpressions.registerJavaDelegateMock(BEAN_NAME/BEAN_CLASS)
+  .onExecutionSetVariables(Map.of("foo", "bar"), Map.of("bar", "foo"));
+```
+
+1. invocation of the delegate the variable "foo" with the value "bar" is set
+2. invocation of the delegate the variable "bar" with the value "foo" is set
+
 ### Easy register and verify mocks
 
 In addition to the well-known "Mocks.register()" hook, you now have the possibility to register fluent mocks directly:
@@ -207,7 +228,7 @@ Unit-testing listeners and JavaDelegates can be difficult, because the methods a
  white-box testing via verify is possible. But most of the time, you just want to 
  confirm that a certain variable was set (or a dueDate, a candidate, ...).
   
-In these cases, use the Delegate fakes. The implement the interfaces DelegateTask and DelegateExecution,
+In these cases, use the Delegate fakes. They implement the interfaces DelegateTask and DelegateExecution,
 but are implemented as plain, fluent-styled Pojos.
 
 So to test if your TaskListener
@@ -270,7 +291,7 @@ ProcessExpressions
   .deploy(rule);
 ```
 
-More examples could be found in the following class [`CallActivityMockExampleTest`](src/test/java/org/camunda/bpm/extension/mockito/CallActivityMockExampleTest.java).
+More examples could be found in the following class [`CallActivityMockExampleTest`](src/test/java/org/camunda/community/mockito/CallActivityMockExampleTest.java).
 
 ## Mocking of message correlation builder
 
@@ -414,6 +435,16 @@ public class RuntimeServiceAwareServiceTest {
 ## Release Notes
 
 see https://camunda.github.io/camunda-platform-7-mockito/release-notes/
+
+### Release Process
+
+* All issues should be added to a milestone
+* close the milestone to generate a github-release draft, containing all changes
+* publish the github-release (mark as latest release)
+* watch the actions/release pipeline
+* file an issue mentioning camundacommunity/devrel and mark issue with `waitingforcamunda``
+* fingers crossed
+
 
 ## Limitations
 
